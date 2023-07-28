@@ -1,0 +1,235 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flask Chat App</title>
+    <link rel="stylesheet" href="/static/index.css">
+</head>
+<style>
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f7f7f7;
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  color: #333;
+  text-align: center;
+  padding: 20px 0;
+}
+
+#chat-box {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 10px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+}
+
+#message-form {
+  max-width: 600px;
+  margin: 20px auto;
+  display: flex;
+  justify-content: center;
+}
+
+input[type="text"] {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  flex: 1;
+}
+
+input[type="submit"] {
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+input[type="submit"]:hover {
+  background-color: #45a049;
+}
+#logout-link {
+  display: block;
+  text-align: center;
+  margin-top: 10px;
+  text-decoration: none;
+  color: #4CAF50;
+}
+
+#logout-link:hover {
+  text-decoration: underline;
+}
+ 
+ /* Add CSS to style the "Delete" button */
+.delete-form {
+  display: inline;
+  margin-left: 10px;
+}
+
+.delete-form button {
+  background-color: #ff5733;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.delete-form button:hover {
+  background-color: #e74c3c;
+}
+
+/* Add CSS to style the timestamp */
+.timestamp {
+  font-size: 12px;
+  color: #999;
+  margin-left: 10px;
+}
+.navbar {
+            background-color: #333;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+        }
+
+        .navbar a:hover {
+            background-color: #555;
+        }
+  @media only screen and (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .navbar a {
+        display: block;
+        margin: 5px 0;
+    }
+}
+    </style>
+<body>
+<div class="navbar">
+        <a href="/">Home</a>
+        <a href="/login">Login</a>
+        <a href="/signup">Signup</a>
+        <a href="/logout">Logout</a>
+    </div>
+    <h1>Chat App</h1>
+    {% if 'user' in session %}
+        <div id="chat-box">
+            {% for message in messages %}
+                {% set msg_deleted = message.id in session.get('deleted_messages', []) %}
+                {% if not msg_deleted %}
+                    <p data-id="{{ message.id }}">
+                        <strong>{{ message.sender }}:</strong>
+                        {{ message.message | safe }}
+                        <span class="timestamp">({{ message.timestamp }})</span>
+                    </p>
+                    {% if message.sender == session['user'] %}
+                        <form class="delete-form" method="post" data-id="{{ message.id }}">
+                            <button type="submit">Delete</button>
+                        </form>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        </div>
+        <form id="message-form">
+            <input type="text" name="message" placeholder="Your message" required>
+            <input type="submit" value="Send">
+        </form>
+       
+    {% else %}
+        <p>You must be logged in to use the chat app.</p>
+        <a href="/login">Login</a> or <a href="/signup">Signup</a> to get started.
+    {% endif %}
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+ <script>
+        $(document).ready(function() {
+            function renderMessages(messages) {
+                $('#chat-box').empty();
+                for (var i = 0; i < messages.length; i++) {
+                    var message = messages[i];
+                    if (!message.deleted) {
+                        var msgHtml = '<p data-id="' + message.id + '">'
+                            + '<strong>' + message.sender + ':</strong> '
+                            + message.message + ' '
+                            + '<span class="timestamp">(' + message.timestamp + ')</span>'
+                            + '</p>';
+                        if (message.sender === '{{ session["user"] }}') {
+                            msgHtml += '<form class="delete-form" method="post" data-id="' + message.id + '">'
+                                + '<button type="submit">Delete</button>'
+                                + '</form>';
+                        }
+                        $('#chat-box').append(msgHtml);
+                    }
+                }
+            }
+
+            function fetchMessages() {
+                $.ajax({
+                    type: 'GET',
+                    url: '/get_messages',
+                    success: function(response) {
+                        renderMessages(response.messages);
+                    }
+                });
+            }
+
+            // Fetch and render messages on page load
+            fetchMessages();
+
+            // Periodically fetch and render new messages (every 5 seconds in this example)
+            setInterval(fetchMessages, 4000);
+
+            $('#message-form').submit(function(event) {
+                event.preventDefault();
+                $.ajax({
+                    type: 'POST',
+                    url: '/send',
+                    data: $('#message-form').serialize(),
+                    success: function(response) {
+                        // Check if there's an error message in the response
+                        if (response.error) {
+                            $('#error-message').text(response.error).show();
+                        } else {
+                            $('#error-message').hide();
+                            fetchMessages(); // Fetch and render new messages after sending a message
+                            $('#message-form')[0].reset();
+                        }
+                    }
+                });
+            });
+
+            // Delete Message
+            $('#chat-box').on('submit', '.delete-form', function(event) {
+                event.preventDefault();
+                var message_id = $(this).data('id');
+                $.ajax({
+                    type: 'POST',
+                    url: '/delete/' + message_id,
+                    success: function(response) {
+                        fetchMessages(); // Fetch and render new messages after deleting a message
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
