@@ -3,7 +3,7 @@
 ![Python Version](https://img.shields.io/badge/python-3.9-blue.svg)
 ![Flask Version](https://img.shields.io/badge/flask-2.0-orange.svg)
 
-Chat_Web_server is a simple Flask web application for real-time chat. It allows users to sign up, log in, and send messages in a chat room. Messages are persisted using either JSON file or MongoDB, making it easy to choose the storage method that suits your needs.
+Chat Web server is a simple Flask web application for real-time chat. It allows users to sign up, log in, and send messages in a chat room. Messages are persisted using either JSON file or MongoDB, making it easy to choose the storage method that suits your needs.
 
 ## Features
 
@@ -72,6 +72,9 @@ Chat_Web_server/
 ├── README.md
 └── .gitignore
 ```
+## Screenshots
+
+![Screenshot](https://raw.githubusercontent.com/Ishanoshada/Ishanoshada/main/ss/IMG_20230729_003714.jpg)
 
 ## Contributing
 
