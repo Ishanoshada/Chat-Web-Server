@@ -30,7 +30,7 @@ Chat Web server is a simple Flask web application for real-time chat. It allows 
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/ishanoshada/Chat_Web_Server.git
+   git clone https://github.com/ishanoshada/Chat-Web-Server.git
    ```
 
 2. Install the required dependencies:
@@ -55,7 +55,7 @@ Chat Web server is a simple Flask web application for real-time chat. It allows 
 ## Folder Structure
 
 ```
-Chat_Web_server/
+Chat-Web-server/
 │
 ├── app.py
 ├── templates/
