@@ -1,4 +1,5 @@
-# Chat Web Server - Flask Web App [ back-end + front-end ]
+# Chat Web Server - Flask Web App 
+## [ back-end + front-end ]
 
 ![Python Version](https://img.shields.io/badge/python-3.9-blue.svg)
 ![Flask Version](https://img.shields.io/badge/flask-2.0-orange.svg)
