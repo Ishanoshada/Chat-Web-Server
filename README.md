@@ -77,6 +77,8 @@ Chat-Web-server/
 
 ![Screenshot](https://raw.githubusercontent.com/Ishanoshada/Ishanoshada/main/ss/IMG_20230729_003714.jpg)
 
+**Repository Views** ![Views](https://profile-counter.glitch.me/Chatwebserver/count.svg)
+
 ## Contributing
 
 Contributions are welcome! If you encounter any issues or have suggestions for improvements, feel free to open an issue or submit a pull request.
